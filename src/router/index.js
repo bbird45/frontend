@@ -64,11 +64,6 @@ const routes = createRouter({
 ]
 })
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-})
-
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('admin-token') !== null;
 
