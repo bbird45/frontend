@@ -7,7 +7,7 @@ import training_phrasesManagement from '@/views/training_phrasesManagement.vue'
 import AdminLogin from '@/views/Admin.vue'
 import adminManagement from '@/views/AdminManagement.vue'
 
-const routes = createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes : [
     {
