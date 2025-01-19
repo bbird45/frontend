@@ -7,7 +7,7 @@
       </div>
 
       <div class="flex-grow text-center text-2xl font-bold"
-        style="color: #3260a5">
+        style="color: #1d7f50">
         หน้าจัดการฐานข้อมูล
       </div>
 

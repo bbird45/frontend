@@ -1,13 +1,13 @@
 <template>
   <div class="menu-bar bg-white w-70">
     <div class="menu-group">
-      <div class="flex items-center text-[#3260a5] font-bold mb-2" @click="toggleContentMenu">
+      <div class="flex items-center text-[#1d7f50] font-bold mb-2" @click="toggleContentMenu">
         <font-awesome-icon icon="book-open" class="m-2" />
         จัดการข้อมูลเนื้อหา
       </div>
       <div v-if="isContentMenuOpen">
         <div
-          class="flex items-center menu-item text-[#3260a5]"
+          class="flex items-center menu-item text-[#1d7f50]"
           :class="{ active: $route.path === '/flowchart' }"
         >
           <font-awesome-icon icon="project-diagram" />
@@ -16,7 +16,7 @@
           </router-link>
         </div>
         <div
-          class="flex items-center menu-item text-[#3260a5]"
+          class="flex items-center menu-item text-[#1d7f50]"
           :class="{ active: $route.path === '/Pseudocode' }"
         >
           <font-awesome-icon icon="laptop-code" />
@@ -27,7 +27,7 @@
       </div>
     </div>
     <div
-      class="flex items-center menu-item text-[#3260a5]"
+      class="flex items-center menu-item text-[#1d7f50]"
       :class="{ active: $route.path === '/Quiz' }"
     >
       <font-awesome-icon icon="poll" />
@@ -36,7 +36,7 @@
       </router-link>
     </div>
     <div
-      class="flex items-center menu-item text-[#3260a5]"
+      class="flex items-center menu-item text-[#1d7f50]"
       :class="{ active: $route.path === '/Score' }"
     >
       <font-awesome-icon icon="clipboard-list" />
@@ -45,7 +45,7 @@
       </router-link>
     </div>
     <div
-      class="flex items-center menu-item text-[#3260a5]"
+      class="flex items-center menu-item text-[#1d7f50]"
       :class="{ active: $route.path === '/training_phrases' }"
     >
       <font-awesome-icon icon="question-circle" />
@@ -54,7 +54,7 @@
       </router-link>
     </div>
     <div
-      class="flex items-center menu-item text-[#3260a5]"
+      class="flex items-center menu-item text-[#1d7f50]"
       :class="{ active: $route.path === '/admin' }"
     >
       <font-awesome-icon icon="user" />
