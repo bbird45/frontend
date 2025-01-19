@@ -7,11 +7,14 @@ import training_phrasesManagement from '@/views/training_phrasesManagement.vue'
 import AdminLogin from '@/views/Admin.vue'
 import adminManagement from '@/views/AdminManagement.vue'
 
-const routes = [
-  {
-    path: '/',
-    redirect: '/login',
-  },
+const routes = createRouter({
+  history: createWebHistory(),
+  routes : [
+    {
+      path: '/',
+      name: '/',
+      redirect: '/login',
+    },
   {
     path: '/login',
     name: 'login',
@@ -59,6 +62,7 @@ const routes = [
     meta: { requiresAuth: true }, // ต้องล็อกอิน
   }
 ]
+})
 
 const router = createRouter({
   history: createWebHistory(),
@@ -66,18 +70,20 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = localStorage.getItem('admin-token') !== null
+  const isAuthenticated = localStorage.getItem('admin-token') !== null;
 
-  if (to.meta.requiresAuth && !isAuthenticated) {
+  if (!to.matched.length) {
+    next('/login');
+  } else if (to.meta.requiresAuth && !isAuthenticated) {
     // เปลี่ยนไปหน้า Login ถ้าไม่ได้ล็อกอิน
-    next('/login')
+    next('/login');
   } else if (to.path === '/login' && isAuthenticated) {
     // ถ้าล็อกอินแล้ว ให้เปลี่ยนไปหน้าแรก (เช่น /app)
-    next('/app')
+    next('/app');
   } else {
     // อนุญาตให้เข้าถึงเส้นทางอื่น ๆ
-    next()
+    next();
   }
-})
+});
 
 export default router

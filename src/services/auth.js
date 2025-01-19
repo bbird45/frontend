@@ -2,11 +2,13 @@ import axios from 'axios';
 
 // สร้าง axios instance พร้อมกำหนดค่าเริ่มต้น
 const api = axios.create({
-  baseURL: process.env.VUE_APP_API_BASE_URL || 'http://localhost:5000',
+  baseURL: process.env.VUE_APP_API_BASE_URL || 'http://localhost:5000/api',
   headers: {
     'Content-Type': 'application/json'
   }
 });
+
+export default api;
 
 export const authService = {
   async login(email_admin, password) {
