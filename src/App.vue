@@ -7,9 +7,8 @@
     <template v-if="isAuthenticated">
       <HeaderBar class="fixed top-0 left-0 w-full h-28 bg-white shadow-md z-50" />
       
-      <div class="flex pt-16">
-        <MenuBar class="fixed top-28 left-0 w-70 bg-white shadow-md h-[calc(100vh-4rem)]"/>
-        <main class="flex-1 ml-72 p-6 mt-12">
+      <div class="flex pt-6">
+        <main class="flex-1 p-6 mt-5">
           <router-view />
         </main>
       </div>
@@ -26,13 +25,11 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import HeaderBar from '@/components/HeaderBar.vue'
-import MenuBar from '@/components/MenuBar.vue'
 
 export default {
   name: 'App',
   components: {
     HeaderBar,
-    MenuBar,
   },
   setup() {
     const isAuthenticated = ref(false)

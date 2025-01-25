@@ -1,112 +1,142 @@
 <template>
   <div>
-    <div class="flex justify-between">
-      <h2 class="text-2xl font-bold mt-4">{{ textHeader }}</h2>
-      <button @click="openAddDialog" class="add-button">เพิ่มข้อมูล</button>
+    <!-- Header and Add Button -->
+    <div class="flex justify-between items-center p-4">
+      <h2 class="text-xl sm:text-2xl font-bold">{{ textHeader }}</h2>
+      <button @click="openAddDialog" class="add-button bg-[#1d7f50] text-white px-4 py-2 rounded-md">
+        เพิ่มข้อมูล
+      </button>
     </div>
-    <table>
-      <thead>
-        <tr class="h-color text-center">
-          <th v-for="header in headers" :key="header">{{ header }}</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(row, rowIndex) in displayedData" :key="rowIndex">
-          <td v-for="(cell, cellIndex) in row" :key="cellIndex" v-html="getDisplayName(headers[cellIndex], cell)"></td>
-          <td width="100px">
-            <div class="flex">
-              <button class="bg-[#228B22]" @click="openEditDialog(row, rowIndex)"> <font-awesome-icon icon="edit" /></button>
-              <button class="bg-red-500" @click="openDeleteConfirm(rowIndex)"> <font-awesome-icon icon="trash" /></button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
 
-  <div v-if="showAddDialog" class="modal-overlay">
-    <div class="modal-content">
-      <div class="bg-[#1d7f50] p-4 border border-[#1d7f50] rounded-t-md">
-        <p class="text-2xl text-white">เพิ่มข้อมูล</p>
-      </div>
-      <div class="m-4">
-        <div v-for="(header, index) in headers.slice(1)" :key="index" class="flex flex-col mt-4">
-          <div class="flex">
-            <label>{{ header }}</label>
-            <p class="text-red-500">*</p>
+    <!-- Responsive Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse border border-[#1d7f50]">
+        <thead>
+          <tr class="bg-[#1d7f50] text-white text-center">
+            <th
+              v-for="(header, index) in headers"
+              :key="header"
+              :class="['p-2 border border-[#1d7f50]', getColumnWidth(index)]"
+            >
+              {{ header }}
+            </th>
+            <th :class="['p-2 border border-[#1d7f50]', getColumnWidth(headers.length)]">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(row, rowIndex) in paginatedData" :key="rowIndex">
+            <td
+              v-for="(cell, cellIndex) in row"
+              :key="cellIndex"
+              :class="['p-2 border border-[#1d7f50]', getColumnWidth(cellIndex)]"
+              v-html="getDisplayName(headers[cellIndex], cell)"
+            ></td>
+            <td :class="['p-2 border border-[#1d7f50]', getColumnWidth(headers.length)]">
+              <div class="flex space-x-2 justify-center">
+                <button class="bg-[#228B22] text-white px-2 py-1 rounded" @click="openEditDialog(row, rowIndex)">
+                  <font-awesome-icon icon="edit" />
+                </button>
+                <button class="bg-red-500 text-white px-2 py-1 rounded" @click="openDeleteConfirm(rowIndex)">
+                  <font-awesome-icon icon="trash" />
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="flex justify-center items-center mt-4 space-x-2">
+      <button @click="firstPage" :disabled="currentPage === 1" class="pagination-button">
+        หน้าแรก
+      </button>
+      <button @click="prevPage" :disabled="currentPage === 1" class="pagination-button">
+        หน้าก่อนหน้า
+      </button>
+      <span class="text-sm">หน้า {{ currentPage }} จาก {{ totalPages }}</span>
+      <button @click="nextPage" :disabled="currentPage === totalPages" class="pagination-button">
+        หน้าถัดไป
+      </button>
+      <button @click="lastPage" :disabled="currentPage === totalPages" class="pagination-button">
+        หน้าสุดท้าย
+      </button>
+    </div>
+
+    <!-- Add Dialog -->
+    <div v-if="showAddDialog" class="modal-overlay">
+      <div class="modal-content bg-white rounded-lg w-11/12 sm:w-96">
+        <div class="bg-[#1d7f50] p-4 rounded-t-lg">
+          <p class="text-xl text-white">เพิ่มข้อมูล</p>
+        </div>
+        <div class="p-4">
+          <div v-for="(header, index) in headers.slice(1)" :key="index" class="mb-4">
+            <label class="block text-sm font-medium">{{ header }}<span class="text-red-500">*</span></label>
+            <template v-if="isSelectionField(header)">
+              <select v-model="newRow[index]" class="w-full p-2 border border-gray-300 rounded mt-1">
+                <option value="" disabled>เลือก{{ header }}</option>
+                <option v-for="option in getOptionsForField(header)" :key="option.id" :value="option.id">
+                  {{ option.name }}
+                </option>
+              </select>
+            </template>
+            <template v-else>
+              <textarea v-model="newRow[index]" class="w-full p-2 border border-gray-300 rounded mt-1" :placeholder="'กรอก ' + header"></textarea>
+            </template>
           </div>
-          <template v-if="isSelectionField(header)">
-            <select v-model="newRow[index]">
-              <option value="" disabled>เลือก{{ header }}</option>
-              <option v-for="option in getOptionsForField(header)" :key="option.id" :value="option.id">
-                {{ option.name }}
-              </option>
-            </select>
-          </template>
-          <template v-else>
-            <textarea class="border border-gray-300 mt-1 p-2 rounded" v-model="newRow[index]"
-              :placeholder="'กรอก ' + header" />
-          </template>
-        </div>
-        <div class="flex justify-center mt-4 w-full">
-          <button class="bg-[#1d7f50] w-full " @click="addRow">เพิ่ม</button>
-          <button class="bg-[#ff6666] w-full" @click="closeAddDialog">ยกเลิก</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div v-if="showEditDialog" class="modal-overlay">
-    <div class="modal-content">
-      <div class="bg-[#1d7f50] p-4 border border-[#1d7f50] rounded-t-md">
-        <p class="text-2xl text-white">แก้ไขข้อมูล</p>
-      </div>
-      <div class="m-4 ">
-        <div v-for="(header, index) in headers.slice(1)" :key="index" class="flex flex-col mt-4">
-          <div class="flex">
-            <label>{{ header }}</label>
-            <p class="text-red-500">*</p>
+          <div class="flex space-x-2">
+            <button @click="addRow" class="w-full bg-[#1d7f50] text-white px-4 py-2 rounded">เพิ่ม</button>
+            <button @click="closeAddDialog" class="w-full bg-[#ff6666] text-white px-4 py-2 rounded">ยกเลิก</button>
           </div>
-          <template v-if="isSelectionField(header)">
-            <select v-model="editRow[index + 1]">
-              <option value="" disabled>เลือก{{ header }}</option>
-              <option v-for="option in getOptionsForField(header)" :key="option.id" :value="option.id">
-                {{ option.name }}
-              </option>
-            </select>
-          </template>
-          <template v-else>
-            <textarea class="border border-gray-300 mt-1 p-2 rounded" v-model="editRow[index + 1]"
-              :placeholder="'แก้ไข ' + header" />
-          </template>
-        </div>
-        <div class="flex justify-center mt-4 w-full">
-          <button class="bg-[#1d7f50] mt-4 w-full" @click="saveRow">บันทึก</button>
-          <button class="bg-[#ff6666] mt-4 w-full" @click="closeEditDialog">ยกเลิก</button>
         </div>
       </div>
     </div>
-  </div>
 
-  <div v-if="showDeleteConfirm" class="modal-overlay">
-  <div class="modal-content">
-    <div class="bg-[#ff6666] p-4 border border-[#ff6666] rounded-t-md">
-      <p class="text-2xl text-white">ลบข้อมูล</p>
+    <!-- Edit Dialog -->
+    <div v-if="showEditDialog" class="modal-overlay">
+      <div class="modal-content bg-white rounded-lg w-11/12 sm:w-96">
+        <div class="bg-[#1d7f50] p-4 rounded-t-lg">
+          <p class="text-xl text-white">แก้ไขข้อมูล</p>
+        </div>
+        <div class="p-4">
+          <div v-for="(header, index) in headers.slice(1)" :key="index" class="mb-4">
+            <label class="block text-sm font-medium">{{ header }}<span class="text-red-500">*</span></label>
+            <template v-if="isSelectionField(header)">
+              <select v-model="editRow[index + 1]" class="w-full p-2 border border-gray-300 rounded mt-1">
+                <option value="" disabled>เลือก{{ header }}</option>
+                <option v-for="option in getOptionsForField(header)" :key="option.id" :value="option.id">
+                  {{ option.name }}
+                </option>
+              </select>
+            </template>
+            <template v-else>
+              <textarea v-model="editRow[index + 1]" class="w-full p-2 border border-gray-300 rounded mt-1" :placeholder="'แก้ไข ' + header"></textarea>
+            </template>
+          </div>
+          <div class="flex space-x-2">
+            <button @click="saveRow" class="w-full bg-[#1d7f50] text-white px-4 py-2 rounded">บันทึก</button>
+            <button @click="closeEditDialog" class="w-full bg-[#ff6666] text-white px-4 py-2 rounded">ยกเลิก</button>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="m-4">
-      <p class="text-center text-lg">คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?</p>
-      <div class="flex justify-center mt-4">
-        <button class="bg-[#1d7f50] px-6 py-2 rounded text-white mr-4" @click="confirmDelete">
-          ตกลง
-        </button>
-        <button class="bg-[#ff6666] px-6 py-2 rounded text-white" @click="cancelDelete">
-          ยกเลิก
-        </button>
+
+    <!-- Delete Confirm Dialog -->
+    <div v-if="showDeleteConfirm" class="modal-overlay">
+      <div class="modal-content bg-white rounded-lg w-11/12 sm:w-96">
+        <div class="bg-[#ff6666] p-4 rounded-t-lg">
+          <p class="text-xl text-white">ลบข้อมูล</p>
+        </div>
+        <div class="p-4">
+          <p class="text-center text-lg">คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?</p>
+          <div class="flex justify-center mt-4 space-x-4">
+            <button @click="confirmDelete" class="bg-[#1d7f50] text-white px-6 py-2 rounded">ตกลง</button>
+            <button @click="cancelDelete" class="bg-[#ff6666] text-white px-6 py-2 rounded">ยกเลิก</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -139,7 +169,6 @@ export default {
       type: Array,
       default: () => []
     },
-
   },
 
   data() {
@@ -147,20 +176,33 @@ export default {
       internalData: [...this.data],
       editRowIndex: null,
       editRow: [],
-      showAddForm: false,
       newRow: Array(this.headers.length - 1).fill(""),
-      errorMessage: "",
       showAddDialog: false,
       showEditDialog: false,
-      indexs: 1,
       showDeleteConfirm: false,
-      deleteRowIndex: null 
+      deleteRowIndex: null,
+      currentPage: 1,
+      itemsPerPage: 7 // แสดงข้อมูลแค่ 7 รายการต่อหน้า
     };
   },
 
   watch: {
     data(newData) {
       this.internalData = [...newData];
+    }
+  },
+
+  computed: {
+    displayedData() {
+      return this.internalData.slice().sort((a, b) => a[0] - b[0]);
+    },
+    totalPages() {
+      return Math.ceil(this.displayedData.length / this.itemsPerPage);
+    },
+    paginatedData() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.displayedData.slice(start, end);
     }
   },
 
@@ -203,8 +245,6 @@ export default {
 
     getDisplayName(header, value) {
       if (!value) return "ไม่ระบุ";
-
-      // ตรวจสอบว่าคอลัมน์เป็น URL
       if (header === "link" || header.toLowerCase().includes("url")) {
         return `<a href="${value}" target="_blank" rel="noopener noreferrer" class="text-blue-500 underline">${value}</a>`;
       }
@@ -213,17 +253,24 @@ export default {
       return option ? option.name : value;
     },
 
-    toggleAddRow() {
-      this.showAddForm = !this.showAddForm;
-      this.newRow = Array(this.headers.length - 1).fill("");
-      this.errorMessage = "";
-
+    getColumnWidth(index) {
+      // กำหนดความกว้างของแต่ละคอลัมน์
+      const widths = [
+        'w-[1%]',   // คอลัมน์ที่ 1 (เช่น ID)
+        'w-[18%]',  // คอลัมน์ที่ 2
+        'w-[65%]',  // คอลัมน์ที่ 3
+        'w-[4%]',  // คอลัมน์ที่ 4
+        'w-[5%]',  // คอลัมน์ที่ 5
+        'w-[5%]'   // คอลัมน์ที่ 6 (เช่น Actions)
+      ];
+      return widths[index] || 'w-auto'; // หากไม่มีค่าให้ใช้ความกว้างอัตโนมัติ
     },
 
     openAddDialog() {
       this.showAddDialog = true;
       this.newRow = Array(this.headers.length - 1).fill("");
     },
+
     closeAddDialog() {
       this.showAddDialog = false;
     },
@@ -241,12 +288,12 @@ export default {
       this.showEditDialog = true;
       this.editRowIndex = index;
       this.editRow = [...row];
-      console.log("editRow", this.editRow);
-
     },
+
     closeEditDialog() {
       this.showEditDialog = false;
     },
+
     saveRow() {
       if (this.editRow.some(field => !field)) {
         alert("กรุณากรอกข้อมูลให้ครบถ้วน");
@@ -256,37 +303,44 @@ export default {
       this.closeEditDialog();
     },
 
-    deleteRow(index) {
-      const id = this.internalData[index][0];
-      this.$emit("delete", id);
-    },
     openDeleteConfirm(index) {
-      this.deleteRowIndex = index; 
-      this.showDeleteConfirm = true; 
+      this.deleteRowIndex = index;
+      this.showDeleteConfirm = true;
     },
+
     cancelDelete() {
-      this.deleteRowIndex = null; 
-      this.showDeleteConfirm = false; 
+      this.deleteRowIndex = null;
+      this.showDeleteConfirm = false;
     },
+
     confirmDelete() {
       if (this.deleteRowIndex !== null) {
         const id = this.internalData[this.deleteRowIndex][0];
-        this.$emit("delete", id); 
-        this.internalData.splice(this.deleteRowIndex, 1); 
-        this.deleteRowIndex = null; 
-        this.showDeleteConfirm = false; 
+        this.$emit("delete", id);
+        this.internalData.splice(this.deleteRowIndex, 1);
+        this.deleteRowIndex = null;
+        this.showDeleteConfirm = false;
       }
     },
 
-    cancelAddRow() {
-      this.showAddForm = false;
-      this.errorMessage = "";
+    firstPage() {
+      this.currentPage = 1;
     },
-  },
 
-  computed: {
-    displayedData() {
-      return this.internalData.slice().sort((a, b) => a[0] - b[0]);
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
+
+    lastPage() {
+      this.currentPage = this.totalPages;
     }
   }
 };
@@ -306,74 +360,29 @@ export default {
 }
 
 .modal-content {
-  background: rgb(240, 240, 240);
+  background: white;
   border-radius: 8px;
-  width: 400px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 button {
-  margin: 5px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 1rem;
-}
-
-th,
-td {
-  border: 1px solid #1d7f50;
-  padding: 8px;
-  text-align: left;
-
-}
-
-th {
-  background-color: #1d7f50;
-}
-
-button {
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-  border-radius: 4px;
-  margin-right: 4px;
   transition: background-color 0.3s;
 }
 
-.add-button {
-  margin-top: 1rem;
+textarea {
+  resize: vertical;
+}
+
+.pagination-button {
   background-color: #1d7f50;
-  padding: 10px;
-  margin-right: 10px;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
 }
 
-.add-form {
-  width: 30%;
-  margin-top: 1rem;
-  padding: 1rem;
-  border: 1px solid #1d7f50;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-}
-
-select {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-top: 4px;
-}
-
-.error-message {
-  color: red;
-  margin-top: 1rem;
-}
-
-.h-color {
-  color: #ffffff;
+.pagination-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 </style>
