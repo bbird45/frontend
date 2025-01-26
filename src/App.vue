@@ -8,7 +8,7 @@
       <HeaderBar class="fixed top-0 left-0 w-full h-28 bg-white shadow-md z-50" />
       
       <div class="flex pt-6">
-        <main class="flex-1 p-6 mt-5">
+        <main class="flex-1 p-6 mt-12">
           <router-view />
         </main>
       </div>
