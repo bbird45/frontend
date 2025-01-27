@@ -2,9 +2,10 @@
   <div>
     <div class="flex justify-between items-center p-4">
       <h2 class="text-xl sm:text-2xl font-bold">{{ textHeader }}</h2>
-      <button @click="openAddDialog" class="add-button bg-[#1d7f50] text-white px-4 py-2 rounded-md">
-        เพิ่มข้อมูล
-      </button>
+      <button @click="openAddDialog" class="bg-[#1d7f50] text-white px-4 py-2 rounded-md hover:bg-[#155a3d] focus:outline-none focus:ring-2 focus:ring-[#1d7f50] focus:ring-offset-2 flex items-center">
+  เพิ่มข้อมูล
+</button>
+
     </div>
     <div class="overflow-x-auto">
       <table class="w-full border-collapse border border-[#1d7f50]">
@@ -30,10 +31,10 @@
             ></td>
             <td :class="['p-2 border border-[#1d7f50]', getColumnWidth(headers.length)]">
               <div class="flex space-x-2 justify-center">
-                <button class="bg-[#228B22] text-white px-2 py-1 rounded" @click="openEditDialog(row, rowIndex)">
+                <button class="bg-[#228B22] text-white px-2 py-2 rounded-md hover:bg-[#1b6f1b] focus:outline-none focus:ring-2 focus:ring-[#228B22] focus:ring-offset-2 flex items-center" @click="openEditDialog(row, rowIndex)">
                   <font-awesome-icon icon="edit" />
                 </button>
-                <button class="bg-red-500 text-white px-2 py-1 rounded" @click="openDeleteConfirm(rowIndex)">
+                <button class="bg-red-500 text-white px-2 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 flex items-center" @click="openDeleteConfirm(rowIndex)">
                   <font-awesome-icon icon="trash" />
                 </button>
               </div>
@@ -78,8 +79,8 @@
             </template>
           </div>
           <div class="flex space-x-2">
-            <button @click="addRow" class="w-full bg-[#1d7f50] text-white px-4 py-2 rounded">เพิ่ม</button>
-            <button @click="closeAddDialog" class="w-full bg-[#ff6666] text-white px-4 py-2 rounded">ยกเลิก</button>
+            <button @click="addRow" class="w-full bg-[#1d7f50] text-white px-4 py-2 rounded hover:bg-[#155a3d]">เพิ่ม</button>
+            <button @click="closeAddDialog" class="w-full bg-[#ff6666] text-white px-4 py-2 rounded hover:bg-red-600">ยกเลิก</button>
           </div>
         </div>
       </div>
@@ -105,8 +106,8 @@
             </template>
           </div>
           <div class="flex space-x-2">
-            <button @click="saveRow" class="w-full bg-[#1d7f50] text-white px-4 py-2 rounded">บันทึก</button>
-            <button @click="closeEditDialog" class="w-full bg-[#ff6666] text-white px-4 py-2 rounded">ยกเลิก</button>
+            <button @click="saveRow" class="w-full bg-[#1d7f50] text-white px-4 py-2 rounded hover:bg-[#155a3d]">บันทึก</button>
+            <button @click="closeEditDialog" class="w-full bg-[#ff6666] text-white px-4 py-2 rounded hover:bg-red-600">ยกเลิก</button>
           </div>
         </div>
       </div>
@@ -119,8 +120,8 @@
         <div class="p-4">
           <p class="text-center text-lg">คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?</p>
           <div class="flex justify-center mt-4 space-x-4">
-            <button @click="confirmDelete" class="bg-[#1d7f50] text-white px-6 py-2 rounded">ตกลง</button>
-            <button @click="cancelDelete" class="bg-[#ff6666] text-white px-6 py-2 rounded">ยกเลิก</button>
+            <button @click="confirmDelete" class="bg-[#1d7f50] text-white px-6 py-2 rounded hover:bg-[#155a3d]">ตกลง</button>
+            <button @click="cancelDelete" class="bg-[#ff6666] text-white px-6 py-2 rounded hover:bg-red-600">ยกเลิก</button>
           </div>
         </div>
       </div>
