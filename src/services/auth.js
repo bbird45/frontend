@@ -27,7 +27,6 @@ export const authService = {
         throw new Error('Token not received from server');
       }
     } catch (error) {
-      // จัดการ error ให้ละเอียดขึ้น
       if (error.response) {
         // กรณีเซิร์ฟเวอร์ตอบกลับด้วย status code นอกช่วง 2xx
         switch (error.response.status) {
@@ -44,7 +43,6 @@ export const authService = {
         // กรณีไม่ได้รับการตอบกลับจากเซิร์ฟเวอร์
         throw new Error('No response from server. Please check your internet connection');
       } else {
-        // กรณีอื่นๆ
         throw new Error(`Login error: ${error.message}`);
       }
     }

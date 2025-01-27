@@ -20,7 +20,6 @@ export default {
   border-top: 1px solid #444;
 }
 
-/* เพิ่ม padding ด้านบนในกรณีที่เนื้อหาเยอะ */
 .footer-bar div {
   padding: 10px 0;
 }

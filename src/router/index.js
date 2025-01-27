@@ -29,37 +29,37 @@ const router = createRouter({
     path: '/flowchart',
     name: 'flowchart',
     component: flowchartManagement,
-    meta: { requiresAuth: true }, // ต้องล็อกอิน
+    meta: { requiresAuth: true }, 
   },
   {
     path: '/Pseudocode',
     name: 'Pseudocode',
     component: PseudocodeManagement,
-    meta: { requiresAuth: true }, // ต้องล็อกอิน
+    meta: { requiresAuth: true }, 
   },
   {
     path: '/Quiz',
     name: 'Quiz',
     component: QuizManagement,
-    meta: { requiresAuth: true }, // ต้องล็อกอิน
+    meta: { requiresAuth: true }, 
   },
   {
     path: '/Score',
     name: 'Score',
     component: ScoreManagement,
-    meta: { requiresAuth: true }, // ต้องล็อกอิน
+    meta: { requiresAuth: true }, 
   },
   {
     path: '/training_phrases',
     name: 'training_phrases',
     component: training_phrasesManagement,
-    meta: { requiresAuth: true }, // ต้องล็อกอิน
+    meta: { requiresAuth: true }, 
   },
   {
     path: '/admin',
     name: 'admin',
     component: adminManagement,
-    meta: { requiresAuth: true }, // ต้องล็อกอิน
+    meta: { requiresAuth: true }, 
   }
 ]
 })

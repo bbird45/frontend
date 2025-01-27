@@ -1,14 +1,11 @@
 <template>
   <div>
-    <!-- Header and Add Button -->
     <div class="flex justify-between items-center p-4">
       <h2 class="text-xl sm:text-2xl font-bold">{{ textHeader }}</h2>
       <button @click="openAddDialog" class="add-button bg-[#1d7f50] text-white px-4 py-2 rounded-md">
         เพิ่มข้อมูล
       </button>
     </div>
-
-    <!-- Responsive Table -->
     <div class="overflow-x-auto">
       <table class="w-full border-collapse border border-[#1d7f50]">
         <thead>
@@ -45,8 +42,6 @@
         </tbody>
       </table>
     </div>
-
-    <!-- Pagination Controls -->
     <div class="flex justify-center items-center mt-4 space-x-2">
       <button @click="firstPage" :disabled="currentPage === 1" class="pagination-button">
         หน้าแรก
@@ -62,8 +57,6 @@
         หน้าสุดท้าย
       </button>
     </div>
-
-    <!-- Add Dialog -->
     <div v-if="showAddDialog" class="modal-overlay">
       <div class="modal-content bg-white rounded-lg w-11/12 sm:w-96">
         <div class="bg-[#1d7f50] p-4 rounded-t-lg">
@@ -91,8 +84,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Edit Dialog -->
     <div v-if="showEditDialog" class="modal-overlay">
       <div class="modal-content bg-white rounded-lg w-11/12 sm:w-96">
         <div class="bg-[#1d7f50] p-4 rounded-t-lg">
@@ -120,8 +111,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Delete Confirm Dialog -->
     <div v-if="showDeleteConfirm" class="modal-overlay">
       <div class="modal-content bg-white rounded-lg w-11/12 sm:w-96">
         <div class="bg-[#ff6666] p-4 rounded-t-lg">
@@ -182,7 +171,7 @@ export default {
       showDeleteConfirm: false,
       deleteRowIndex: null,
       currentPage: 1,
-      itemsPerPage: 7 // แสดงข้อมูลแค่ 7 รายการต่อหน้า
+      itemsPerPage: 7 
     };
   },
 
@@ -254,16 +243,15 @@ export default {
     },
 
     getColumnWidth(index) {
-      // กำหนดความกว้างของแต่ละคอลัมน์
       const widths = [
-        'w-[1%]',   // คอลัมน์ที่ 1 (เช่น ID)
-        'w-[18%]',  // คอลัมน์ที่ 2
-        'w-[65%]',  // คอลัมน์ที่ 3
-        'w-[4%]',  // คอลัมน์ที่ 4
-        'w-[5%]',  // คอลัมน์ที่ 5
-        'w-[5%]'   // คอลัมน์ที่ 6 (เช่น Actions)
+        'w-[1%]',   
+        'w-[18%]',  
+        'w-[65%]',  
+        'w-[4%]',  
+        'w-[5%]',  
+        'w-[5%]'   
       ];
-      return widths[index] || 'w-auto'; // หากไม่มีค่าให้ใช้ความกว้างอัตโนมัติ
+      return widths[index] || 'w-auto'; 
     },
 
     openAddDialog() {
