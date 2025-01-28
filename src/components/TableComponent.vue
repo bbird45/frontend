@@ -3,9 +3,8 @@
     <div class="flex justify-between items-center p-4">
       <h2 class="text-xl sm:text-2xl font-bold">{{ textHeader }}</h2>
       <button @click="openAddDialog" class="bg-[#1d7f50] text-white px-4 py-2 rounded-md hover:bg-[#155a3d] focus:outline-none focus:ring-2 focus:ring-[#1d7f50] focus:ring-offset-2 flex items-center">
-  เพิ่มข้อมูล
-</button>
-
+        เพิ่มข้อมูล
+      </button>
     </div>
     <div class="overflow-x-auto">
       <table class="w-full border-collapse border border-[#1d7f50]">
