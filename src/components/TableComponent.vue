@@ -177,22 +177,22 @@ export default {
   },
 
   watch: {
-    data(newData) {
-      this.internalData = [...newData];
-    }
-  },
+  internalData(newData) {
+    this.$emit('update:data', newData);
+  }
+},
 
   computed: {
     displayedData() {
       return this.internalData.slice().sort((a, b) => a[0] - b[0]);
     },
     totalPages() {
-      return Math.ceil(this.displayedData.length / this.itemsPerPage);
+      return Math.ceil(this.internalData.length / this.itemsPerPage);
     },
     paginatedData() {
       const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.displayedData.slice(start, end);
+      const end = Math.min(start + this.itemsPerPage, this.internalData.length); // ป้องกัน Index เกิน
+      return this.internalData.slice(start, end);
     }
   },
 
@@ -303,14 +303,22 @@ export default {
     },
 
     confirmDelete() {
-      if (this.deleteRowIndex !== null) {
-        const id = this.internalData[this.deleteRowIndex][0];
-        this.$emit("delete", id);
-        this.internalData.splice(this.deleteRowIndex, 1);
-        this.deleteRowIndex = null;
-        this.showDeleteConfirm = false;
-      }
-    },
+  if (this.deleteRowIndex !== null) {
+    const idToDelete = this.paginatedData[this.deleteRowIndex][0];
+    const actualIndex = this.internalData.findIndex(row => row[0] === idToDelete);
+
+    if (actualIndex !== -1) {
+      this.$emit("delete", idToDelete);
+      this.internalData.splice(actualIndex, 1);
+    } else {
+      console.error("ไม่พบข้อมูลที่ต้องการลบ");
+    }
+
+    this.deleteRowIndex = null;
+    this.showDeleteConfirm = false;
+  }
+}
+,
 
     firstPage() {
       this.currentPage = 1;
