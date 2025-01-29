@@ -233,7 +233,7 @@ export default {
     },
 
     getDisplayName(header, value) {
-      if (!value) return "ไม่ระบุ";
+      if (!value) return `<span class="text-red-500">ยังไม่มีการกรอกข้อมูลในช่องนี้</span>`;
       if (header === "link" || header.toLowerCase().includes("url")) {
         return `<a href="${value}" target="_blank" rel="noopener noreferrer" class="text-blue-500 underline">${value}</a>`;
       }
@@ -241,6 +241,7 @@ export default {
       const option = options.find(opt => opt.id === parseInt(value));
       return option ? option.name : value;
     },
+
 
     getColumnWidth(index) {
       const widths = [
