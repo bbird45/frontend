@@ -238,7 +238,7 @@ getOptionsForField(header) {
 
 getDisplayName(header, value) {
   if (!header || !value) return `<span class="text-red-500">ยังไม่มีการกรอกข้อมูลในช่องนี้</span>`;
-  if (header === "password") return "********************";
+  if (header === "Password") return "********************";
   if (header === "link" || header.toLowerCase().includes("url")) {
     return `<a href="${value}" target="_blank" rel="noopener noreferrer" class="text-blue-500 underline">${value}</a>`;
   }
