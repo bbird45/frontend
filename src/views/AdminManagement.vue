@@ -95,7 +95,7 @@ export default {
       // ตรวจสอบรูปแบบอีเมล
       const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
       if (!emailPattern.test(email_admin)) {
-        this.error = "กรุณากรอกอีเมลให้ถูกต้อง"
+        this.error = "กรุณากรอกอีเมลให้ถูกต้อง A-Z, a-z, 0-9, ., _, - @ เท่านั้น"
         return
       }
 
@@ -149,7 +149,7 @@ async handleDelete(id) {
       // ตรวจสอบรูปแบบอีเมล
       const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
       if (!emailPattern.test(email_admin)) {
-        this.error = "กรุณากรอกอีเมลให้ถูกต้อง"
+        this.error = "กรุณากรอกอีเมลให้ถูกต้อง A-Z, a-z, 0-9, ., _, - @ เท่านั้น"
         return
       }
 

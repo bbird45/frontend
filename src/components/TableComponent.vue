@@ -281,7 +281,7 @@ export default {
   if (emailIndex !== -1) {
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailPattern.test(this.newRow[emailIndex - 1])) { // ลบ 1 เพราะ headers.slice(1)
-      alert("กรุณากรอกอีเมลให้ถูกต้อง");
+      alert("กรุณากรอกอีเมลให้ถูกต้อง A-Z, a-z, 0-9, ., _, - @ เท่านั้น");
       return;
     }
   }
@@ -323,7 +323,7 @@ export default {
   if (emailIndex !== -1) {
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailPattern.test(this.editRow[emailIndex])) {
-      alert("กรุณากรอกอีเมลให้ถูกต้อง");
+      alert("กรุณากรอกอีเมลให้ถูกต้อง A-Z, a-z, 0-9, ., _, - @ เท่านั้น");
       return;
     }
   }
