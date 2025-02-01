@@ -112,19 +112,19 @@
       </div>
     </div>
     <div v-if="showDeleteConfirm" class="modal-overlay">
-      <div class="modal-content bg-white rounded-lg w-11/12 sm:w-96">
-        <div class="bg-[#ff6666] p-4 rounded-t-lg">
-          <p class="text-xl text-white">ลบข้อมูล</p>
-        </div>
-        <div class="p-4">
-          <p class="text-center text-lg">คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?</p>
-          <div class="flex justify-center mt-4 space-x-4">
-            <button @click="confirmDelete" class="bg-[#1d7f50] text-white px-6 py-2 rounded hover:bg-[#155a3d]">ตกลง</button>
-            <button @click="cancelDelete" class="bg-[#ff6666] text-white px-6 py-2 rounded hover:bg-red-600">ยกเลิก</button>
-          </div>
+    <div class="modal-content bg-white rounded-lg w-11/12 sm:w-96">
+      <div class="bg-[#ff6666] p-4 rounded-t-lg">
+        <p class="text-xl text-white">ลบข้อมูล</p>
+      </div>
+      <div class="p-4">
+        <p class="text-center text-lg">คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?</p>
+        <div class="flex justify-center mt-4 space-x-4">
+          <button @click="confirmDelete" class="bg-[#1d7f50] text-white px-6 py-2 rounded hover:bg-[#155a3d]">ตกลง</button>
+          <button @click="cancelDelete" class="bg-[#ff6666] text-white px-6 py-2 rounded hover:bg-red-600">ยกเลิก</button>
         </div>
       </div>
     </div>
+  </div>
   </div>
 </template>
 
@@ -177,7 +177,9 @@ export default {
 
   watch: {
   internalData(newData) {
-    this.$emit('update:data', newData);
+    if (newData) {
+      this.$emit('update:data', newData);
+    }
   }
 },
 
@@ -189,10 +191,11 @@ export default {
       return Math.ceil(this.internalData.length / this.itemsPerPage);
     },
     paginatedData() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = Math.min(start + this.itemsPerPage, this.internalData.length); // ป้องกัน Index เกิน
-      return this.internalData.slice(start, end);
-    }
+  if (this.itemsPerPage <= 0) return this.internalData; // หาก itemsPerPage ไม่ถูกต้อง ให้แสดงข้อมูลทั้งหมด
+  const start = (this.currentPage - 1) * this.itemsPerPage;
+  const end = Math.min(start + this.itemsPerPage, this.internalData.length);
+  return this.internalData.slice(start, end);
+}
   },
 
   methods: {
@@ -201,47 +204,48 @@ export default {
     },
 
     getOptionsForField(header) {
-      switch (header) {
-        case 'ข้อมูลผังงาน':
-          return this.flowchartOptions.map(flowchart => ({
-            id: flowchart.flow_id,
-            name: flowchart.flow_name
-          }));
-        case 'ข้อมูลรหัสเทียม':
-          return this.PseudocodeOptions.map(Pseudocode => ({
-            id: Pseudocode.Pseudo_id,
-            name: Pseudocode.Pseudo_name,
-          }));
-        case 'ข้อมูลแบบทดสอบ':
-          return this.QuizOptions.map(Quiz => ({
-            id: Quiz.Quiz_id,
-            name: Quiz.Quiz_name,
-          }));
-        case 'ข้อมูลคะแนนสอบ':
-          return this.ScoreOptions.map(Score => ({
-            id: Score.score_id,
-            name: Score.score_name,
-          }));
-        case 'Intent (หมวดหมู่)':
-          return this.intentOptions.map(intent => ({
-            id: intent.intent_id,
-            name: intent.intent_description
-          }))
-        default:
-          return [];
-      }
-    },
+  if (!header) return [];
+  switch (header) {
+    case 'ข้อมูลผังงาน':
+      return this.flowchartOptions.map(flowchart => ({
+        id: flowchart.flow_id,
+        name: flowchart.flow_name
+      }));
+    case 'ข้อมูลรหัสเทียม':
+      return this.PseudocodeOptions.map(Pseudocode => ({
+        id: Pseudocode.Pseudo_id,
+        name: Pseudocode.Pseudo_name,
+      }));
+    case 'ข้อมูลแบบทดสอบ':
+      return this.QuizOptions.map(Quiz => ({
+        id: Quiz.Quiz_id,
+        name: Quiz.Quiz_name,
+      }));
+    case 'ข้อมูลคะแนนสอบ':
+      return this.ScoreOptions.map(Score => ({
+        id: Score.score_id,
+        name: Score.score_name,
+      }));
+    case 'Intent (หมวดหมู่)':
+      return this.intentOptions.map(intent => ({
+        id: intent.intent_id,
+        name: intent.intent_description
+      }));
+    default:
+      return [];
+  }
+},
 
     getDisplayName(header, value) {
-      if (header === "password") return "********************";
-      if (!value) return `<span class="text-red-500">ยังไม่มีการกรอกข้อมูลในช่องนี้</span>`;
-      if (header === "link" || header.toLowerCase().includes("url")) {
-        return `<a href="${value}" target="_blank" rel="noopener noreferrer" class="text-blue-500 underline">${value}</a>`;
-      }
-      const options = this.getOptionsForField(header);
-      const option = options.find(opt => opt.id === parseInt(value));
-      return option ? option.name : value;
-    },
+  if (!header || !value) return `<span class="text-red-500">ยังไม่มีการกรอกข้อมูลในช่องนี้</span>`;
+  if (header === "password") return "********************";
+  if (header === "link" || header.toLowerCase().includes("url")) {
+    return `<a href="${value}" target="_blank" rel="noopener noreferrer" class="text-blue-500 underline">${value}</a>`;
+  }
+  const options = this.getOptionsForField(header);
+  const option = options.find(opt => opt.id === parseInt(value));
+  return option ? option.name : value;
+},
 
 
     getColumnWidth(index) {
@@ -266,13 +270,36 @@ export default {
     },
 
     addRow() {
-      if (this.newRow.some(field => !field)) {
-        alert("กรุณากรอกข้อมูลให้ครบถ้วน");
-        return;
-      }
-      this.$emit("add", this.newRow);
-      this.closeAddDialog();
-    },
+  // ตรวจสอบว่าข้อมูลทุกฟิลด์ถูกกรอกครบถ้วน
+  if (this.newRow.some(field => !field)) {
+    alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+    return;
+  }
+
+  // ตรวจสอบรูปแบบอีเมล (หากมีฟิลด์อีเมล)
+  const emailIndex = this.headers.indexOf("Email");
+  if (emailIndex !== -1) {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailPattern.test(this.newRow[emailIndex - 1])) { // ลบ 1 เพราะ headers.slice(1)
+      alert("กรุณากรอกอีเมลให้ถูกต้อง");
+      return;
+    }
+  }
+
+  // ตรวจสอบเบอร์โทรศัพท์ (หากมีฟิลด์เบอร์โทรศัพท์)
+  const phoneIndex = this.headers.indexOf("Phone");
+  if (phoneIndex !== -1) {
+    const phonePattern = /^[0-9]{10}$/; // ตรวจสอบว่าเบอร์โทรศัพท์มี 10 ตัวเลข
+    if (!phonePattern.test(this.newRow[phoneIndex - 1])) { // ลบ 1 เพราะ headers.slice(1)
+      alert("กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (ตัวเลข 10 หลัก)");
+      return;
+    }
+  }
+
+  // ถ้าข้อมูลถูกต้องทั้งหมด ให้ emit event และปิด dialog
+  this.$emit("add", this.newRow);
+  this.closeAddDialog();
+},
 
     openEditDialog(row, index) {
       this.showEditDialog = true;
@@ -285,41 +312,63 @@ export default {
     },
 
     saveRow() {
-      if (this.editRow.some(field => !field)) {
-        alert("กรุณากรอกข้อมูลให้ครบถ้วน");
-        return;
-      }
-      this.$emit("update", { updatedRow: this.editRow });
-      this.closeEditDialog();
-    },
+  // ตรวจสอบว่าข้อมูลทุกฟิลด์ถูกกรอกครบถ้วน
+  if (this.editRow.some(field => !field)) {
+    alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+    return;
+  }
 
-    openDeleteConfirm(index) {
-      this.deleteRowIndex = index;
-      this.showDeleteConfirm = true;
-    },
+  // ตรวจสอบรูปแบบอีเมล (หากมีฟิลด์อีเมล)
+  const emailIndex = this.headers.indexOf("Email");
+  if (emailIndex !== -1) {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailPattern.test(this.editRow[emailIndex])) {
+      alert("กรุณากรอกอีเมลให้ถูกต้อง");
+      return;
+    }
+  }
 
-    cancelDelete() {
-      this.deleteRowIndex = null;
-      this.showDeleteConfirm = false;
-    },
+  // ตรวจสอบเบอร์โทรศัพท์ (หากมีฟิลด์เบอร์โทรศัพท์)
+  const phoneIndex = this.headers.indexOf("Phone");
+  if (phoneIndex !== -1) {
+    const phonePattern = /^[0-9]{10}$/; // ตรวจสอบว่าเบอร์โทรศัพท์มี 10 ตัวเลข
+    if (!phonePattern.test(this.editRow[phoneIndex])) {
+      alert("กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (ตัวเลข 10 หลัก)");
+      return;
+    }
+  }
+
+  // ถ้าข้อมูลถูกต้องทั้งหมด ให้ emit event และปิด dialog
+  this.$emit("update", { updatedRow: this.editRow });
+  this.closeEditDialog();
+},
+
+  openDeleteConfirm(index) {
+    this.deleteRowIndex = index;
+    this.showDeleteConfirm = true; // แสดง modal ยืนยันการลบข้อมูล
+  },
+
+  cancelDelete() {
+    this.deleteRowIndex = null;
+    this.showDeleteConfirm = false; // ปิด modal โดยไม่ทำการลบ
+  },
 
     confirmDelete() {
-  if (this.deleteRowIndex !== null) {
-    const idToDelete = this.paginatedData[this.deleteRowIndex][0];
-    const actualIndex = this.internalData.findIndex(row => row[0] === idToDelete);
+    if (this.deleteRowIndex !== null) {
+      const idToDelete = this.paginatedData[this.deleteRowIndex][0];
+      const actualIndex = this.internalData.findIndex(row => row[0] === idToDelete);
 
-    if (actualIndex !== -1) {
-      this.$emit("delete", idToDelete);
-      this.internalData.splice(actualIndex, 1);
-    } else {
-      console.error("ไม่พบข้อมูลที่ต้องการลบ");
+      if (actualIndex !== -1) {
+        this.$emit("delete", idToDelete); // ส่ง event ลบข้อมูล
+        this.internalData.splice(actualIndex, 1); // ลบข้อมูลออกจาก internalData
+      } else {
+        console.error("ไม่พบข้อมูลที่ต้องการลบ");
+      }
+
+      this.deleteRowIndex = null; // รีเซ็ตค่า
+      this.showDeleteConfirm = false; // ปิด modal
     }
-
-    this.deleteRowIndex = null;
-    this.showDeleteConfirm = false;
-  }
-}
-,
+  },
 
     firstPage() {
       this.currentPage = 1;
