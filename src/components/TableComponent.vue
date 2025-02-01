@@ -130,52 +130,52 @@
 
 <script>
 export default {
-  props: {
-    textHeader: String,
-    headers: Array,
-    data: Array,
-    flowchartOptions: {
-      type: Array,
-      default: () => []
-    },
-    PseudocodeOptions: {
-      type: Array,
-      default: () => []
-    },
-    QuizOptions: {
-      type: Array,
-      default: () => []
-    },
-    ScoreOptions: {
-      type: Array,
-      default: () => []
-    },
-    trainingPhraseOptions: {
-      type: Array,
-      default: () => []
-    },
-    intentOptions: {
-      type: Array,
-      default: () => []
-    },
+props: {
+  textHeader: String,
+  headers: Array,
+  data: Array,
+  flowchartOptions: {
+    type: Array,
+    default: () => []
   },
-
-  data() {
-    return {
-      internalData: [...this.data],
-      editRowIndex: null,
-      editRow: [],
-      newRow: Array(this.headers.length - 1).fill(""),
-      showAddDialog: false,
-      showEditDialog: false,
-      showDeleteConfirm: false,
-      deleteRowIndex: null,
-      currentPage: 1,
-      itemsPerPage: 7 
-    };
+  PseudocodeOptions: {
+    type: Array,
+    default: () => []
   },
+  QuizOptions: {
+    type: Array,
+    default: () => []
+  },
+  ScoreOptions: {
+    type: Array,
+    default: () => []
+  },
+  trainingPhraseOptions: {
+    type: Array,
+    default: () => []
+  },
+  intentOptions: {
+    type: Array,
+    default: () => []
+  },
+},
 
-  watch: {
+data() {
+  return {
+    internalData: [...this.data],
+    editRowIndex: null,
+    editRow: [],
+    newRow: Array(this.headers.length - 1).fill(""),
+    showAddDialog: false,
+    showEditDialog: false,
+    showDeleteConfirm: false,
+    deleteRowIndex: null,
+    currentPage: 1,
+    itemsPerPage: 7 
+  };
+},
+
+watch: {
   internalData(newData) {
     if (newData) {
       this.$emit('update:data', newData);
@@ -183,27 +183,27 @@ export default {
   }
 },
 
-  computed: {
-    displayedData() {
-      return this.internalData.slice().sort((a, b) => a[0] - b[0]);
-    },
-    totalPages() {
-      return Math.ceil(this.internalData.length / this.itemsPerPage);
-    },
-    paginatedData() {
-  if (this.itemsPerPage <= 0) return this.internalData; // หาก itemsPerPage ไม่ถูกต้อง ให้แสดงข้อมูลทั้งหมด
-  const start = (this.currentPage - 1) * this.itemsPerPage;
-  const end = Math.min(start + this.itemsPerPage, this.internalData.length);
-  return this.internalData.slice(start, end);
-}
+computed: {
+  displayedData() {
+    return this.internalData.slice().sort((a, b) => a[0] - b[0]);
   },
+  totalPages() {
+    return Math.ceil(this.internalData.length / this.itemsPerPage);
+  },
+  paginatedData() {
+    if (this.itemsPerPage <= 0) return this.internalData; 
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = Math.min(start + this.itemsPerPage, this.internalData.length);
+    return this.internalData.slice(start, end);
+  }
+},
 
-  methods: {
-    isSelectionField(header) {
-      return ['ข้อมูลผังงาน', 'ข้อมูลรหัสเทียม', 'ข้อมูลแบบทดสอบ', 'ข้อมูลคะแนนสอบ', 'Intent (หมวดหมู่)'].includes(header);
-    },
+methods: {
+  isSelectionField(header) {
+    return ['ข้อมูลผังงาน', 'ข้อมูลรหัสเทียม', 'ข้อมูลแบบทดสอบ', 'ข้อมูลคะแนนสอบ', 'Intent (หมวดหมู่)'].includes(header);
+},
 
-    getOptionsForField(header) {
+getOptionsForField(header) {
   if (!header) return [];
   switch (header) {
     case 'ข้อมูลผังงาน':
@@ -236,7 +236,7 @@ export default {
   }
 },
 
-    getDisplayName(header, value) {
+getDisplayName(header, value) {
   if (!header || !value) return `<span class="text-red-500">ยังไม่มีการกรอกข้อมูลในช่องนี้</span>`;
   if (header === "password") return "********************";
   if (header === "link" || header.toLowerCase().includes("url")) {
@@ -248,80 +248,99 @@ export default {
 },
 
 
-    getColumnWidth(index) {
-      const widths = [
-        'w-[1%]',   
-        'w-[18%]',  
-        'w-[65%]',  
-        'w-[4%]',  
-        'w-[5%]',  
-        'w-[5%]'   
-      ];
-      return widths[index] || 'w-auto'; 
-    },
+getColumnWidth(index) {
+  const widths = [
+    'w-[1%]',   
+    'w-[18%]',  
+    'w-[65%]',  
+    'w-[4%]',  
+    'w-[5%]',  
+    'w-[5%]'   
+  ];
+  return widths[index] || 'w-auto'; 
+},
 
-    openAddDialog() {
-      this.showAddDialog = true;
-      this.newRow = Array(this.headers.length - 1).fill("");
-    },
+openAddDialog() {
+  this.showAddDialog = true;
+  this.newRow = Array(this.headers.length - 1).fill("");
+},
 
-    closeAddDialog() {
-      this.showAddDialog = false;
-    },
+closeAddDialog() {
+  this.showAddDialog = false;
+},
 
-    addRow() {
+addRow() {
   // ตรวจสอบว่าข้อมูลทุกฟิลด์ถูกกรอกครบถ้วน
   if (this.newRow.some(field => !field)) {
     alert("กรุณากรอกข้อมูลให้ครบถ้วน");
     return;
   }
 
-  // ตรวจสอบรูปแบบอีเมล (หากมีฟิลด์อีเมล)
-  const emailIndex = this.headers.indexOf("Email");
-  if (emailIndex !== -1) {
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailPattern.test(this.newRow[emailIndex - 1])) { // ลบ 1 เพราะ headers.slice(1)
-      alert("กรุณากรอกอีเมลให้ถูกต้อง A-Z, a-z, 0-9, ., _, - @ เท่านั้น");
+    // ตรวจสอบรหัสผ่าน (หากมีฟิลด์รหัสผ่าน)
+    const passwordIndex = this.headers.indexOf("Password");
+      if (passwordIndex !== -1) {
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+      if (!passwordPattern.test(this.newRow[passwordIndex - 1])) { 
+        alert("กรุณากรอกรหัสผ่านให้ถูกต้อง:\n- ต้องมีอย่างน้อย 6 ตัวอักษร\n- ต้องมีตัวอักษรพิมพ์ใหญ่อย่างน้อย 1 ตัว\n- ต้องมีตัวอักษรพิมพ์เล็กอย่างน้อย 1 ตัว\n- ต้องมีตัวเลขอย่างน้อย 1 ตัว\n- ต้องมีอักขระพิเศษอย่างน้อย 1 ตัว");
+      return;
+    }
+  }
+
+    // ตรวจสอบรูปแบบอีเมล (หากมีฟิลด์อีเมล)
+    const emailIndex = this.headers.indexOf("Email");
+      if (emailIndex !== -1) {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
+      if (!emailPattern.test(this.newRow[emailIndex - 1])) { 
+        alert("กรุณากรอกอีเมลให้ถูกต้อง A-Z, a-z, 0-9, ., _, - @ เท่านั้น");
       return;
     }
   }
 
   // ตรวจสอบเบอร์โทรศัพท์ (หากมีฟิลด์เบอร์โทรศัพท์)
   const phoneIndex = this.headers.indexOf("Phone");
-  if (phoneIndex !== -1) {
-    const phonePattern = /^[0-9]{10}$/; // ตรวจสอบว่าเบอร์โทรศัพท์มี 10 ตัวเลข
-    if (!phonePattern.test(this.newRow[phoneIndex - 1])) { // ลบ 1 เพราะ headers.slice(1)
-      alert("กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (ตัวเลข 10 หลัก)");
+    if (phoneIndex !== -1) {
+      const phonePattern = /^[0-9]{10}$/; 
+      if (!phonePattern.test(this.newRow[phoneIndex - 1])) { 
+        alert("กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (ตัวเลข 10 หลัก)");
       return;
     }
   }
 
-  // ถ้าข้อมูลถูกต้องทั้งหมด ให้ emit event และปิด dialog
   this.$emit("add", this.newRow);
   this.closeAddDialog();
 },
 
-    openEditDialog(row, index) {
-      this.showEditDialog = true;
-      this.editRowIndex = index;
-      this.editRow = [...row];
-    },
+openEditDialog(row, index) {
+  this.showEditDialog = true;
+  this.editRowIndex = index;
+  this.editRow = [...row];
+},
 
-    closeEditDialog() {
-      this.showEditDialog = false;
-    },
+closeEditDialog() {
+  this.showEditDialog = false;
+},
 
-    saveRow() {
+saveRow() {
   // ตรวจสอบว่าข้อมูลทุกฟิลด์ถูกกรอกครบถ้วน
   if (this.editRow.some(field => !field)) {
     alert("กรุณากรอกข้อมูลให้ครบถ้วน");
     return;
   }
 
+  // ตรวจสอบรหัสผ่าน (หากมีฟิลด์รหัสผ่าน)
+  const passwordIndex = this.headers.indexOf("Password");
+  if (passwordIndex !== -1) {
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+    if (!passwordPattern.test(this.editRow[passwordIndex])) {
+      alert("กรุณากรอกรหัสผ่านให้ถูกต้อง:\n- ต้องมีอย่างน้อย 6 ตัวอักษร\n- ต้องมีตัวอักษรพิมพ์ใหญ่อย่างน้อย 1 ตัว\n- ต้องมีตัวอักษรพิมพ์เล็กอย่างน้อย 1 ตัว\n- ต้องมีตัวเลขอย่างน้อย 1 ตัว\n- ต้องมีอักขระพิเศษอย่างน้อย 1 ตัว");
+      return;
+    }
+  }
+
   // ตรวจสอบรูปแบบอีเมล (หากมีฟิลด์อีเมล)
   const emailIndex = this.headers.indexOf("Email");
   if (emailIndex !== -1) {
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
     if (!emailPattern.test(this.editRow[emailIndex])) {
       alert("กรุณากรอกอีเมลให้ถูกต้อง A-Z, a-z, 0-9, ., _, - @ เท่านั้น");
       return;
@@ -331,63 +350,62 @@ export default {
   // ตรวจสอบเบอร์โทรศัพท์ (หากมีฟิลด์เบอร์โทรศัพท์)
   const phoneIndex = this.headers.indexOf("Phone");
   if (phoneIndex !== -1) {
-    const phonePattern = /^[0-9]{10}$/; // ตรวจสอบว่าเบอร์โทรศัพท์มี 10 ตัวเลข
+    const phonePattern = /^[0-9]{10}$/; 
     if (!phonePattern.test(this.editRow[phoneIndex])) {
       alert("กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (ตัวเลข 10 หลัก)");
       return;
     }
   }
 
-  // ถ้าข้อมูลถูกต้องทั้งหมด ให้ emit event และปิด dialog
   this.$emit("update", { updatedRow: this.editRow });
   this.closeEditDialog();
 },
 
-  openDeleteConfirm(index) {
-    this.deleteRowIndex = index;
-    this.showDeleteConfirm = true; // แสดง modal ยืนยันการลบข้อมูล
-  },
+openDeleteConfirm(index) {
+  this.deleteRowIndex = index;
+  this.showDeleteConfirm = true; 
+},
 
-  cancelDelete() {
-    this.deleteRowIndex = null;
-    this.showDeleteConfirm = false; // ปิด modal โดยไม่ทำการลบ
-  },
+cancelDelete() {
+  this.deleteRowIndex = null;
+  this.showDeleteConfirm = false; 
+},
 
-    confirmDelete() {
-    if (this.deleteRowIndex !== null) {
-      const idToDelete = this.paginatedData[this.deleteRowIndex][0];
-      const actualIndex = this.internalData.findIndex(row => row[0] === idToDelete);
+confirmDelete() {
+  if (this.deleteRowIndex !== null) {
+    const idToDelete = this.paginatedData[this.deleteRowIndex][0];
+    const actualIndex = this.internalData.findIndex(row => row[0] === idToDelete);
 
-      if (actualIndex !== -1) {
-        this.$emit("delete", idToDelete); // ส่ง event ลบข้อมูล
-        this.internalData.splice(actualIndex, 1); // ลบข้อมูลออกจาก internalData
-      } else {
-        console.error("ไม่พบข้อมูลที่ต้องการลบ");
-      }
-
-      this.deleteRowIndex = null; // รีเซ็ตค่า
-      this.showDeleteConfirm = false; // ปิด modal
+    if (actualIndex !== -1) {
+      this.$emit("delete", idToDelete); 
+      this.internalData.splice(actualIndex, 1); 
+    } else {
+      console.error("ไม่พบข้อมูลที่ต้องการลบ");
     }
-  },
 
-    firstPage() {
-      this.currentPage = 1;
-    },
+    this.deleteRowIndex = null; 
+    this.showDeleteConfirm = false;
+  }
+},
 
-    prevPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--;
-      }
-    },
+firstPage() {
+  this.currentPage = 1;
+},
 
-    nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++;
-      }
-    },
+prevPage() {
+  if (this.currentPage > 1) {
+    this.currentPage--;
+  }
+},
 
-    lastPage() {
-      this.currentPage = this.totalPages;
+nextPage() {
+  if (this.currentPage < this.totalPages) {
+    this.currentPage++;
+  }
+},
+
+lastPage() {
+  this.currentPage = this.totalPages;
     }
   }
 };

@@ -35,7 +35,7 @@ export default {
   data() {
     return {
       textcourses: "ข้อมูลผู้ดูแลระบบ",
-      adminHeaders: ["ID", "name", "password", "Email", "Phone"],
+      adminHeaders: ["ID", "Name", "Password", "Email", "Phone"],
       adminData: [],
       loading: false,
       error: null,
@@ -72,48 +72,56 @@ export default {
     },
 
     async handleAdd(newRow) {
-      const [username, password, email_admin, Phone] = newRow
+    const [username, password, email_admin, Phone] = newRow
 
-      // ตรวจสอบข้อมูลที่กรอก
-      if (!username) {
-        this.error = "กรุณากรอกชื่อ"
-        return
-      }
-      if (!password) {
-        this.error = "กรุณากรอกรหัสผ่าน"
-        return
-      }
-      if (!email_admin) {
-        this.error = "กรุณากรอกอีเมล"
-        return
-      }
-      if (!Phone) {
-        this.error = "กรุณากรอกเบอร์โทร"
-        return
-      }
+    // ตรวจสอบข้อมูลที่กรอก
+    if (!username) {
+      this.error = "กรุณากรอกชื่อ"
+      return
+    }
+    if (!password) {
+      this.error = "กรุณากรอกรหัสผ่าน"
+      return
+    }
 
-      // ตรวจสอบรูปแบบอีเมล
-      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-      if (!emailPattern.test(email_admin)) {
-        this.error = "กรุณากรอกอีเมลให้ถูกต้อง A-Z, a-z, 0-9, ., _, - @ เท่านั้น"
-        return
-      }
+    // ตรวจสอบรหัสผ่าน
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/
+      if (!passwordPattern.test(password)) {
+        this.error = "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร และต้องประกอบด้วยตัวอักษรใหญ่, ตัวอักษรเล็ก, ตัวเลข, และอักขระพิเศษ"
+      return
+    }
 
-      // ตรวจสอบรูปแบบเบอร์โทรศัพท์ (ตัวเลข 10 หลัก)
-      const phonePattern = /^[0-9]{10}$/
-      if (!phonePattern.test(Phone)) {
-        this.error = "กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (ตัวเลข 10 หลัก)"
-        return
-      }
+    if (!email_admin) {
+      this.error = "กรุณากรอกอีเมล"
+      return
+    }
+    if (!Phone) {
+      this.error = "กรุณากรอกเบอร์โทร"
+      return
+    }
 
-      try {
-        await adminAPI.create({ username, password, email_admin, Phone })
-        await this.fetchadminData()
-      } catch (error) {
-        console.error("เกิดข้อผิดพลาดในการเพิ่มข้อมูล", error)
-        this.error = error.response?.data || "ไม่สามารถเพิ่มข้อมูลได้"
-      }
-    },
+    // ตรวจสอบรูปแบบอีเมล
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/
+    if (!emailPattern.test(email_admin)) {
+      this.error = "กรุณากรอกอีเมลให้ถูกต้อง A-Z, a-z, 0-9, ., _, - @ เท่านั้น"
+      return
+    }
+
+    // ตรวจสอบรูปแบบเบอร์โทรศัพท์ (ตัวเลข 10 หลัก)
+    const phonePattern = /^[0-9]{10}$/
+    if (!phonePattern.test(Phone)) {
+      this.error = "กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (ตัวเลข 10 หลัก)"
+      return
+    }
+
+  try {
+    await adminAPI.create({ username, password, email_admin, Phone })
+    await this.fetchadminData()
+  } catch (error) {
+    console.error("เกิดข้อผิดพลาดในการเพิ่มข้อมูล", error)
+    this.error = error.response?.data || "ไม่สามารถเพิ่มข้อมูลได้"
+  }
+},
 
 async handleDelete(id) {
   try {
@@ -123,20 +131,28 @@ async handleDelete(id) {
     console.error("เกิดข้อผิดพลาดในการลบข้อมูล", error);
     this.error = error.response?.data || "ไม่สามารถลบข้อมูลได้";
   }
-  },
+},
 
-    async handleUpdate({ updatedRow }) {
-      const [id, username, password, email_admin, Phone] = updatedRow
+async handleUpdate({ updatedRow }) {
+  const [id, username, password, email_admin, Phone] = updatedRow
 
-      // ตรวจสอบข้อมูลที่กรอก
-      if (!username) {
-        this.error = "กรุณากรอกชื่อ"
-        return
-      }
-      if (!password) {
-        this.error = "กรุณากรอกรหัสผ่าน"
-        return
-      }
+  // ตรวจสอบข้อมูลที่กรอก
+  if (!username) {
+    this.error = "กรุณากรอกชื่อ"
+    return
+  }
+  if (!password) {
+    this.error = "กรุณากรอกรหัสผ่าน"
+    return
+  }
+
+      // ตรวจสอบรหัสผ่าน
+  const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/
+  if (!passwordPattern.test(password)) {
+    this.error = "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร และต้องประกอบด้วยตัวอักษรใหญ่, ตัวอักษรเล็ก, ตัวเลข, และอักขระพิเศษ"
+    return
+  }
+
       if (!email_admin) {
         this.error = "กรุณากรอกอีเมล"
         return
@@ -147,7 +163,7 @@ async handleDelete(id) {
       }
 
       // ตรวจสอบรูปแบบอีเมล
-      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/
       if (!emailPattern.test(email_admin)) {
         this.error = "กรุณากรอกอีเมลให้ถูกต้อง A-Z, a-z, 0-9, ., _, - @ เท่านั้น"
         return
